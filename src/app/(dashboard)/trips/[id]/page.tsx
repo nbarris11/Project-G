@@ -14,6 +14,7 @@ import {
 interface MemberResponse {
   id: string;
   memberName: string;
+  homeLocation: string;
   budgetPerPerson: number;
   availableWeekends: string; // JSON string
   createdAt: string;
@@ -162,6 +163,8 @@ export default function TripPage() {
   const deadlinePassed = new Date() > deadline;
   const locked = trip.status === "locked";
 
+  const memberLocations = responses.map((r) => r.homeLocation).filter(Boolean);
+
   const recommendations = locked && trip.budgetPerPerson
     ? getRecommendedCourses({
         destination: trip.destination,
@@ -169,6 +172,7 @@ export default function TripPage() {
         budgetPerPerson: trip.budgetPerPerson,
         numberOfGolfers: trip.numberOfGolfers,
         lodgingType: trip.lodgingType,
+        memberLocations,
       })
     : [];
 
@@ -303,7 +307,7 @@ export default function TripPage() {
                           <div>
                             <p className="font-medium text-gray-900 text-sm">{r.memberName}</p>
                             <p className="text-xs text-gray-400">
-                              {JSON.parse(r.availableWeekends || "[]").length} weekends available
+                              📍 {r.homeLocation} · {JSON.parse(r.availableWeekends || "[]").length} weekends available
                             </p>
                           </div>
                         </div>

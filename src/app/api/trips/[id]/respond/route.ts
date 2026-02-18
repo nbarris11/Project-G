@@ -7,9 +7,9 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { memberName, budgetPerPerson, availableWeekends, joinPassword } = await req.json();
+    const { memberName, homeLocation, budgetPerPerson, availableWeekends, joinPassword } = await req.json();
 
-    if (!memberName || !budgetPerPerson || !availableWeekends || !joinPassword) {
+    if (!memberName || !homeLocation || !budgetPerPerson || !availableWeekends || !joinPassword) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
     }
 
@@ -27,6 +27,7 @@ export async function POST(
       data: {
         tripId: params.id,
         memberName,
+        homeLocation,
         budgetPerPerson: parseFloat(budgetPerPerson),
         availableWeekends: JSON.stringify(availableWeekends),
       },

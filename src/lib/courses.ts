@@ -596,6 +596,89 @@ export interface RecommendationFilters {
   budgetPerPerson: number;
   numberOfGolfers: number;
   lodgingType: string;
+  memberLocations?: string[]; // home cities of group members, e.g. ["Chicago, IL", "Dallas, TX"]
+}
+
+/**
+ * Maps a home city/state to the US regions it can comfortably fly to.
+ * Used to weight recommendations toward destinations accessible to most of the group.
+ */
+function getAccessibleRegions(location: string): string[] {
+  const loc = location.toLowerCase();
+
+  // Southeast residents
+  if (
+    loc.includes("florida") || loc.includes(", fl") ||
+    loc.includes("georgia") || loc.includes(", ga") ||
+    loc.includes("carolina") || loc.includes(", nc") || loc.includes(", sc") ||
+    loc.includes("tennessee") || loc.includes(", tn") ||
+    loc.includes("alabama") || loc.includes(", al") ||
+    loc.includes("atlanta") || loc.includes("charlotte") ||
+    loc.includes("nashville") || loc.includes("miami") || loc.includes("orlando")
+  )
+    return ["Southeast", "Southwest", "Northeast"];
+
+  // Northeast / Mid-Atlantic residents
+  if (
+    loc.includes("new york") || loc.includes(", ny") ||
+    loc.includes(", nj") || loc.includes(", ct") || loc.includes(", ma") ||
+    loc.includes(", pa") || loc.includes(", md") || loc.includes(", va") ||
+    loc.includes("boston") || loc.includes("philadelphia") ||
+    loc.includes("washington dc") || loc.includes("baltimore")
+  )
+    return ["Northeast", "Southeast", "Midwest"];
+
+  // Midwest residents
+  if (
+    loc.includes(", il") || loc.includes(", oh") || loc.includes(", mi") ||
+    loc.includes(", wi") || loc.includes(", mn") || loc.includes(", mo") ||
+    loc.includes(", in") || loc.includes(", ks") || loc.includes(", ne") ||
+    loc.includes("chicago") || loc.includes("detroit") ||
+    loc.includes("minneapolis") || loc.includes("cleveland") || loc.includes("columbus")
+  )
+    return ["Midwest", "Southeast", "Southwest"];
+
+  // Southwest / Mountain West residents
+  if (
+    loc.includes("arizona") || loc.includes(", az") ||
+    loc.includes(", tx") || loc.includes(", nm") || loc.includes(", co") ||
+    loc.includes(", nv") || loc.includes("las vegas") ||
+    loc.includes("dallas") || loc.includes("houston") || loc.includes("denver") ||
+    loc.includes("phoenix") || loc.includes("scottsdale") || loc.includes("austin")
+  )
+    return ["Southwest", "Southeast", "Pacific Northwest"];
+
+  // West Coast / Pacific Northwest residents
+  if (
+    loc.includes(", ca") || loc.includes(", wa") || loc.includes(", or") ||
+    loc.includes("california") || loc.includes("washington") || loc.includes("oregon") ||
+    loc.includes("los angeles") || loc.includes("san francisco") ||
+    loc.includes("seattle") || loc.includes("portland") || loc.includes("san diego")
+  )
+    return ["Pacific Northwest", "Southwest", "Scotland"];
+
+  // Default: anywhere
+  return ["Southeast", "Southwest", "Northeast", "Midwest", "Pacific Northwest"];
+}
+
+/**
+ * Given a list of member home locations, return the regions ranked by
+ * how many members can easily reach them (most accessible first).
+ */
+export function getRankedRegionsByAccess(memberLocations: string[]): string[] {
+  if (!memberLocations.length) return [];
+
+  const regionScore: Record<string, number> = {};
+  memberLocations.forEach((loc) => {
+    getAccessibleRegions(loc).forEach((region, idx) => {
+      // First accessible region scores highest
+      regionScore[region] = (regionScore[region] ?? 0) + (3 - Math.min(idx, 2));
+    });
+  });
+
+  return Object.entries(regionScore)
+    .sort((a, b) => b[1] - a[1])
+    .map(([region]) => region);
 }
 
 const PRICE_RANGES: Record<string, { min: number; max: number }> = {
@@ -703,6 +786,12 @@ export function getRecommendedCourses(
   const targetRegions = normalizeRegion(filters.destination);
   const allowedLevels = SKILL_LEVEL_MAP[filters.skillLevel];
 
+  // If member locations were provided, use them to find the most accessible regions
+  const accessRanking =
+    filters.memberLocations && filters.memberLocations.length > 0
+      ? getRankedRegionsByAccess(filters.memberLocations)
+      : [];
+
   // Estimate per-round golf budget (assume golf = ~30% of per-person trip budget)
   const estimatedGolfBudget = filters.budgetPerPerson * 0.3;
 
@@ -710,17 +799,44 @@ export function getRecommendedCourses(
     let score = 0;
     const matchReasons: string[] = [];
 
-    // Region match
-    if (
-      targetRegions.length === 0 ||
-      targetRegions.includes(course.region)
-    ) {
-      score += targetRegions.length === 0 ? 5 : 30;
+    // Region match — destination takes priority, member locations act as a boost
+    if (targetRegions.length > 0) {
       if (targetRegions.includes(course.region)) {
+        score += 30;
         matchReasons.push(`Located in ${course.region}`);
+      } else {
+        score -= 20;
+      }
+    } else if (accessRanking.length > 0) {
+      // No specific destination — rank by what's most accessible to the group
+      const regionRank = accessRanking.indexOf(course.region);
+      if (regionRank === 0) {
+        score += 30;
+        matchReasons.push(`Most accessible for your group`);
+      } else if (regionRank === 1) {
+        score += 20;
+        matchReasons.push(`Easy to reach for most members`);
+      } else if (regionRank === 2) {
+        score += 10;
+      } else if (regionRank < 0) {
+        score -= 10;
       }
     } else {
-      score -= 20; // Penalise out-of-region courses
+      score += 5; // No info — treat all regions equally
+    }
+
+    // Travel convenience bonus: if course region is in top-2 accessible for most members
+    if (accessRanking.length > 0 && accessRanking.slice(0, 2).includes(course.region)) {
+      const memberCount = filters.memberLocations!.filter((loc) =>
+        getAccessibleRegions(loc).slice(0, 2).includes(course.region)
+      ).length;
+      if (memberCount === filters.memberLocations!.length) {
+        score += 10;
+        matchReasons.push(`Easy flight for all ${memberCount} members`);
+      } else if (memberCount >= Math.ceil(filters.memberLocations!.length * 0.75)) {
+        score += 5;
+        matchReasons.push(`Convenient for ${memberCount}/${filters.memberLocations!.length} members`);
+      }
     }
 
     // Skill level match

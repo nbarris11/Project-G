@@ -84,10 +84,11 @@ model Trip {
 }
 
 model MemberResponse {
-  id               String @id @default(cuid())
-  tripId           String
-  memberName       String
-  budgetPerPerson  Float
+  id                String @id @default(cuid())
+  tripId            String
+  memberName        String
+  homeLocation      String // e.g. "Chicago, IL" — used for travel-aware course recommendations
+  budgetPerPerson   Float
   availableWeekends String // JSON array of "YYYY-MM-DD" Saturday dates
 
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)

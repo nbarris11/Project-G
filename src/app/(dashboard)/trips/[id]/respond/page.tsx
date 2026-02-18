@@ -48,6 +48,7 @@ export default function RespondPage() {
   const [error, setError] = useState("");
 
   const [memberName, setMemberName] = useState("");
+  const [homeLocation, setHomeLocation] = useState("");
   const [budget, setBudget] = useState("");
   const [selectedWeekends, setSelectedWeekends] = useState<string[]>([]);
 
@@ -75,6 +76,7 @@ export default function RespondPage() {
     e.preventDefault();
     setError("");
     if (!memberName.trim()) { setError("Please enter your name."); return; }
+    if (!homeLocation.trim()) { setError("Please enter your home city."); return; }
     if (!budget || parseFloat(budget) <= 0) { setError("Please enter your budget."); return; }
     if (selectedWeekends.length === 0) { setError("Please select at least one available weekend."); return; }
 
@@ -85,6 +87,7 @@ export default function RespondPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           memberName: memberName.trim(),
+          homeLocation: homeLocation.trim(),
           budgetPerPerson: parseFloat(budget),
           availableWeekends: selectedWeekends,
           joinPassword,
@@ -184,6 +187,21 @@ export default function RespondPage() {
               onChange={(e) => setMemberName(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="e.g. Mike Johnson"
+            />
+          </div>
+
+          {/* Home Location */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-900 mb-1">Your Home City</label>
+            <p className="text-xs text-gray-400 mb-2">
+              Used to suggest courses that are easy to reach for everyone in the group.
+            </p>
+            <input
+              type="text"
+              value={homeLocation}
+              onChange={(e) => setHomeLocation(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="e.g. Chicago, IL"
             />
           </div>
 
