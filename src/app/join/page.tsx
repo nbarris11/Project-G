@@ -31,9 +31,9 @@ export default function JoinTripPage() {
         return;
       }
 
-      // Store the password in sessionStorage so the trip page can use it
+      // Store password so the respond page can use it
       sessionStorage.setItem(`trip_${data.tripId}_pw`, form.joinPassword);
-      router.push(`/trips/${data.tripId}`);
+      router.push(`/trips/${data.tripId}/respond`);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -47,9 +47,7 @@ export default function JoinTripPage() {
         <div className="text-center mb-8">
           <div className="text-4xl mb-3">🔗</div>
           <h1 className="text-2xl font-bold text-gray-900">Join a Golf Trip</h1>
-          <p className="text-gray-500 mt-1">
-            Enter the trip code and password from your group organizer
-          </p>
+          <p className="text-gray-500 mt-1">Enter the trip code and password from your organizer</p>
         </div>
 
         {error && (
@@ -60,25 +58,19 @@ export default function JoinTripPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Trip Code
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Trip Code</label>
             <input
               type="text"
               required
               value={form.joinCode}
-              onChange={(e) =>
-                setForm({ ...form, joinCode: e.target.value.toUpperCase() })
-              }
+              onChange={(e) => setForm({ ...form, joinCode: e.target.value.toUpperCase() })}
               className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="e.g. ABC12345"
               maxLength={8}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Trip Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Trip Password</label>
             <input
               type="password"
               required
@@ -100,21 +92,7 @@ export default function JoinTripPage() {
         <div className="mt-6 pt-6 border-t border-gray-100 text-center">
           <p className="text-sm text-gray-500">
             Planning your own trip?{" "}
-            <Link
-              href="/register"
-              className="text-green-700 font-medium hover:underline"
-            >
-              Create an account
-            </Link>
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="text-green-700 font-medium hover:underline"
-            >
-              Log in
-            </Link>
+            <Link href="/register" className="text-green-700 font-medium hover:underline">Create an account</Link>
           </p>
         </div>
       </div>

@@ -14,6 +14,7 @@ export async function GET() {
   const userId = (session.user as { id?: string }).id;
   const trips = await prisma.trip.findMany({
     where: { ownerId: userId },
+    include: { memberResponses: true },
     orderBy: { createdAt: "desc" },
   });
 
@@ -30,34 +31,10 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const {
-      name,
-      destination,
-      startDate,
-      endDate,
-      numberOfGolfers,
-      budgetPerPerson,
-      skillLevel,
-      lodgingType,
-      notes,
-      joinPassword,
-    } = body;
+    const { name, destination, numberOfGolfers, skillLevel, lodgingType, notes, responseDeadline, joinPassword } = body;
 
-    if (
-      !name ||
-      !destination ||
-      !startDate ||
-      !endDate ||
-      !numberOfGolfers ||
-      !budgetPerPerson ||
-      !skillLevel ||
-      !lodgingType ||
-      !joinPassword
-    ) {
-      return NextResponse.json(
-        { error: "All fields are required." },
-        { status: 400 }
-      );
+    if (!name || !destination || !numberOfGolfers || !skillLevel || !lodgingType || !responseDeadline || !joinPassword) {
+      return NextResponse.json({ error: "All fields are required." }, { status: 400 });
     }
 
     const hashedJoinPassword = await bcrypt.hash(joinPassword, 10);
@@ -65,15 +42,11 @@ export async function POST(req: Request) {
 
     const trip = await prisma.trip.create({
       data: {
-        name,
-        destination,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        name, destination,
         numberOfGolfers: parseInt(numberOfGolfers),
-        budgetPerPerson: parseFloat(budgetPerPerson),
-        skillLevel,
-        lodgingType,
+        skillLevel, lodgingType,
         notes: notes || null,
+        responseDeadline: new Date(responseDeadline),
         joinCode,
         joinPassword: hashedJoinPassword,
         ownerId: userId!,
@@ -82,9 +55,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(trip, { status: 201 });
   } catch {
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }
