@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -62,12 +63,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen gradient-green flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-brand-cream flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">⛳</div>
+          <div className="flex justify-center mb-4">
+            <Logo size={36} />
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-          <p className="text-gray-500 mt-1">Start planning your golf trip</p>
+          <p className="text-gray-500 mt-1 text-sm">Start planning your golf outing</p>
         </div>
 
         {error && (
@@ -86,7 +89,7 @@ export default function RegisterPage() {
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
               placeholder="John Smith"
             />
           </div>
@@ -99,7 +102,7 @@ export default function RegisterPage() {
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
               placeholder="john@example.com"
             />
           </div>
@@ -112,7 +115,7 @@ export default function RegisterPage() {
               required
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
               placeholder="Min. 8 characters"
             />
           </div>
@@ -125,14 +128,15 @@ export default function RegisterPage() {
               required
               value={form.confirm}
               onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
               placeholder="Repeat password"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-700 text-white font-semibold py-3 rounded-lg hover:bg-green-800 disabled:opacity-50 mt-2"
+            className="w-full text-white font-semibold py-3 rounded-lg hover:opacity-90 disabled:opacity-50 mt-2"
+            style={{ backgroundColor: "#1C5C3A" }}
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>
@@ -140,13 +144,13 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-green-700 font-medium hover:underline">
+          <Link href="/login" className="font-medium hover:underline" style={{ color: "#1C5C3A" }}>
             Log in
           </Link>
         </p>
         <p className="text-center text-sm text-gray-500 mt-2">
           Have a trip code?{" "}
-          <Link href="/join" className="text-green-700 font-medium hover:underline">
+          <Link href="/join" className="font-medium hover:underline" style={{ color: "#1C5C3A" }}>
             Join a trip
           </Link>
         </p>

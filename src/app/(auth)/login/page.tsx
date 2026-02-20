@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,12 +32,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen gradient-green flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-brand-cream flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">⛳</div>
+          <div className="flex justify-center mb-4">
+            <Logo size={36} />
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="text-gray-500 mt-1">Log in to your Fairway Planner account</p>
+          <p className="text-gray-500 mt-1 text-sm">Log in to your account</p>
         </div>
 
         {error && (
@@ -55,7 +58,8 @@ export default function LoginPage() {
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2"
+              style={{ "--tw-ring-color": "#1C5C3A" } as React.CSSProperties}
               placeholder="john@example.com"
             />
           </div>
@@ -68,14 +72,15 @@ export default function LoginPage() {
               required
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2"
               placeholder="Your password"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-700 text-white font-semibold py-3 rounded-lg hover:bg-green-800 disabled:opacity-50 mt-2"
+            className="w-full text-white font-semibold py-3 rounded-lg hover:opacity-90 disabled:opacity-50 mt-2"
+            style={{ backgroundColor: "#1C5C3A" }}
           >
             {loading ? "Logging in..." : "Log In"}
           </button>
@@ -83,13 +88,13 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-green-700 font-medium hover:underline">
+          <Link href="/register" className="font-medium hover:underline" style={{ color: "#1C5C3A" }}>
             Create one
           </Link>
         </p>
         <p className="text-center text-sm text-gray-500 mt-2">
           Have a trip code?{" "}
-          <Link href="/join" className="text-green-700 font-medium hover:underline">
+          <Link href="/join" className="font-medium hover:underline" style={{ color: "#1C5C3A" }}>
             Join a trip
           </Link>
         </p>

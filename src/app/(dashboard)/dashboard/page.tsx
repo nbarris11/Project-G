@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 interface Trip {
   id: string;
@@ -42,8 +43,8 @@ export default function DashboardPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen gradient-green flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-400 text-sm">Loading...</div>
       </div>
     );
   }
@@ -65,18 +66,15 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Nav */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">⛳</span>
-          <span className="text-lg font-bold text-green-900">Fairway Planner</span>
-        </div>
+      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <Logo size={26} />
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-500">
-            Hi, {session?.user?.name?.split(" ")[0]} 👋
+            Hi, {session?.user?.name?.split(" ")[0]}
           </p>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-400 hover:text-gray-700"
           >
             Log out
           </button>
@@ -89,30 +87,34 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900">Your Trips</h1>
             <p className="text-gray-500 mt-1">
-              Plan, coordinate, and manage all your golf trips.
+              Plan, coordinate, and manage all your golf outings.
             </p>
           </div>
           <Link
             href="/trips/new"
-            className="bg-green-700 text-white px-5 py-3 rounded-xl font-semibold hover:bg-green-800 text-sm"
+            className="text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90 text-sm"
+            style={{ backgroundColor: "#1C5C3A" }}
           >
             + New Trip
           </Link>
         </div>
 
         {trips.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
-            <div className="text-6xl mb-5">⛳</div>
+          <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
+            <div className="flex justify-center mb-5">
+              <Logo size={48} showText={false} />
+            </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              Plan your first golf trip
+              Plan your first golf outing
             </h2>
             <p className="text-gray-500 mb-8 max-w-md mx-auto">
-              Tell us your destination, dates, budget, and group size — and
-              we&apos;ll recommend the best courses and help you plan everything.
+              Tell us your destination, group size, and budget — and
+              we&apos;ll help coordinate your group and recommend the best courses.
             </p>
             <Link
               href="/trips/new"
-              className="bg-green-700 text-white px-8 py-3 rounded-xl font-semibold hover:bg-green-800"
+              className="text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 inline-block"
+              style={{ backgroundColor: "#1C5C3A" }}
             >
               Plan a Golf Trip →
             </Link>
@@ -129,13 +131,13 @@ export default function DashboardPage() {
                 <Link
                   key={trip.id}
                   href={`/trips/${trip.id}`}
-                  className="bg-white rounded-2xl border border-gray-200 p-6 hover:border-green-300 hover:shadow-md transition-all block group"
+                  className="bg-white rounded-2xl border border-gray-100 p-6 hover:border-green-200 hover:shadow-sm transition-all block group"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-bold text-gray-900 text-lg group-hover:text-green-800">
                       {trip.name}
                     </h3>
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full font-mono">
+                    <span className="text-xs bg-gray-50 text-gray-500 px-2 py-1 rounded-full font-mono border border-gray-100">
                       {trip.joinCode}
                     </span>
                   </div>
@@ -162,11 +164,11 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
                     <span className="text-xs text-gray-500">
                       {skillBadge[trip.skillLevel] || trip.skillLevel}
                     </span>
-                    <span className="text-xs font-semibold text-green-700">
+                    <span className="text-xs font-semibold" style={{ color: "#1C5C3A" }}>
                       ${trip.budgetPerPerson.toLocaleString()}/person
                     </span>
                   </div>
@@ -177,7 +179,7 @@ export default function DashboardPage() {
             {/* Add new trip card */}
             <Link
               href="/trips/new"
-              className="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-6 hover:border-green-300 hover:bg-green-50 transition-all flex flex-col items-center justify-center text-center min-h-48"
+              className="bg-white rounded-2xl border-2 border-dashed border-gray-100 p-6 hover:border-green-200 hover:bg-green-50/30 transition-all flex flex-col items-center justify-center text-center min-h-48"
             >
               <div className="text-4xl mb-3">➕</div>
               <p className="font-semibold text-gray-600">Plan a new trip</p>

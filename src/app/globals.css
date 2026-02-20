@@ -2,13 +2,22 @@
 
 @theme {
   --color-green-950: #052e16;
+  --color-brand: #1C5C3A;
+  --color-brand-dark: #154d30;
 }
 
 body {
-  color: #000;
+  color: #111;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #fff;
 }
 
+/* Updated to match Outing.Golf brand — deep forest green */
 .gradient-green {
-  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  background: linear-gradient(135deg, #1C5C3A 0%, #1e6b44 60%, #1a7a4e 100%);
+}
+
+/* Light warm cream background for auth pages */
+.bg-brand-cream {
+  background: #F7F4EF;
 }

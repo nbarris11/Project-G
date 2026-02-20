@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 export default function JoinTripPage() {
   const router = useRouter();
@@ -42,12 +43,14 @@ export default function JoinTripPage() {
   };
 
   return (
-    <div className="min-h-screen gradient-green flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-brand-cream flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">🔗</div>
+          <div className="flex justify-center mb-4">
+            <Logo size={36} />
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">Join a Golf Trip</h1>
-          <p className="text-gray-500 mt-1">Enter the trip code and password from your organizer</p>
+          <p className="text-gray-500 mt-1 text-sm">Enter the trip code and password from your organizer</p>
         </div>
 
         {error && (
@@ -64,7 +67,7 @@ export default function JoinTripPage() {
               required
               value={form.joinCode}
               onChange={(e) => setForm({ ...form, joinCode: e.target.value.toUpperCase() })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-green-700"
               placeholder="e.g. ABC12345"
               maxLength={8}
             />
@@ -76,14 +79,15 @@ export default function JoinTripPage() {
               required
               value={form.joinPassword}
               onChange={(e) => setForm({ ...form, joinPassword: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
               placeholder="Shared trip password"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-700 text-white font-semibold py-3 rounded-lg hover:bg-green-800 disabled:opacity-50 mt-2"
+            className="w-full text-white font-semibold py-3 rounded-lg hover:opacity-90 disabled:opacity-50 mt-2"
+            style={{ backgroundColor: "#1C5C3A" }}
           >
             {loading ? "Joining..." : "Join Trip →"}
           </button>
@@ -92,7 +96,9 @@ export default function JoinTripPage() {
         <div className="mt-6 pt-6 border-t border-gray-100 text-center">
           <p className="text-sm text-gray-500">
             Planning your own trip?{" "}
-            <Link href="/register" className="text-green-700 font-medium hover:underline">Create an account</Link>
+            <Link href="/register" className="font-medium hover:underline" style={{ color: "#1C5C3A" }}>
+              Create an account
+            </Link>
           </p>
         </div>
       </div>
